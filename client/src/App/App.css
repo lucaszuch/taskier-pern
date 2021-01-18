@@ -1,0 +1,16 @@
+html {
+  background-color: #40739e;
+}
+
+.App {
+  background-color: #40739e;
+  min-height: 100vh;
+}
+
+.AppWrapper {
+  background-color: #fff;
+  margin: 0 auto;
+  margin-top: 10vh;
+  width: 80%;
+  min-height: 80vh;
+}

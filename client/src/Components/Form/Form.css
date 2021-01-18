@@ -1,0 +1,22 @@
+.FormBox {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  width: 80%;
+  margin: 0 auto;
+  padding-top: 1rem;
+  margin-bottom: 2rem;
+}
+
+.FormTitle {
+  display: flex;
+  justify-content: center;
+}
+
+.FormWrapper {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  width: 80%;
+  margin: 0 auto;
+}
