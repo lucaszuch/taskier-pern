@@ -1,30 +1,19 @@
 import React, {Fragment, useEffect} from 'react';
-import './TodoList.css';
 
 //Importing components
 import EditTodo from '../EditTodo/EditTodo';
 
-function TodoList({todos, setTodos, description, setDescription}) {
+function TodoList({todos, setTodos, description, setDescription, allTodos, setChangeTodos}) {
   //Delete todo
   const handleDelete = async id => {
     try {
-      const deleteTodo = await fetch(`http://localhost:5000/todos/${id}`, {
-        method: "DELETE"
+      const deleteTodo = await fetch(`http://localhost:5000/dashboard/todos/${id}`, {
+        method: "DELETE",
+        headers: {jwt_token: localStorage.token}
       });
-
+      
+      //Filter through todos and remove the missing id
       setTodos(todos.filter(todo => todo.todo_id !== id));
-    } catch (err) {
-      console.error(err.message);
-    }
-  };
-
-  //Get all the todos
-  const getTodos = async () => {
-    try {
-      const response = await fetch("http://localhost:5000/todos");
-      const jsonData = await response.json();
-
-      setTodos(jsonData);
     } catch (err) {
       console.error(err.message);
     }
@@ -32,12 +21,14 @@ function TodoList({todos, setTodos, description, setDescription}) {
 
   //Load todos
   useEffect(() => {
-    getTodos();
-  }, [todos]);
+    setTodos(allTodos);
+  }, [allTodos]);
 
   return (
     <Fragment>
       <div className="todoContainer">
+        {
+          todos[0]?.todo_id ? //falsy, same as todos[0].todo_id !== 0
         <ul className="todoList">
           {todos.map(todo => (
             <div className="todoBox"
@@ -50,10 +41,16 @@ function TodoList({todos, setTodos, description, setDescription}) {
               </button>
               <EditTodo description={description}
                         setDescription={setDescription}
-                        todo={todo}/>
+                        todo={todo}
+                        setChangeTodos={setChangeTodos}/>
           </div>
           ))}
         </ul>
+        :
+        <div className="emptyList">
+            {/* No tasks */}
+        </div>
+        }
       </div>
       </Fragment>
   )

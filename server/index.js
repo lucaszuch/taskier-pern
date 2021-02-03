@@ -1,82 +1,28 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const port = 5000;
 
-//Importing DB
+//Importing DB and passport cnonfiguration
 const pool = require('./db');
+
+//Declaring port
+const port = 5000;
 
 //Middlewares
 app.use(cors()); //allows local applications to run at the same time.
 app.use(express.json()) //allows us to access req.body;
+app.use(express.urlencoded({extended: false}));
 
-//Routes
-//Create a todo
-app.post('/todos', async (req, res) => {
-  try {
-    const {description} = req.body;
-    const newTodo = await pool.query('INSERT INTO todo (description) VALUES ($1) RETURNING *',
-      [description]
-    );
-    res.json(newTodo.rows[0]);
-    console.log('Todo create!');
-
-  } catch (err) {
-    console.error(err.message);
-  }
+//SERVER TEST ROUTE
+app.get('/', (req, res) => {
+  res.send('Server is running at port 5000')
 });
 
-//Get all todos
-app.get("/todos", async (req, res) => {
-  try {
-    const allTodos = await pool.query("SELECT * FROM todo");
-    res.json(allTodos.rows);
+//USER ROUTES
+app.use('/users', require('./routes/userAuth'));
 
-  } catch (err) {
-    console.error(err.message);
-  }
-});
-
-//Get a single todo
-app.get('/todos/:id', async (req, res) => {
-  try {
-    const {id} = req.params;
-    const todo = await pool.query('SELECT * FROM todo WHERE todo_id = $1',
-    [id]);
-    res.json(todo.rows[0]);
-
-  } catch (err) {
-    console.error(err.message);
-  }
-});
-
-//Update a todo
-app.put('/todos/:id', async (req, res) => {
-  try {
-    const {id} = req.params;
-    const {description} = req.body;
-    const updateTodo = await pool.query('UPDATE todo SET description = $1 WHERE todo_id = $2',
-    [description, id]
-    );
-    res.json(`To do was updated!`);
-
-  } catch (err) {
-    console.error(err.message);    
-  }
-});
-
-//Delete a todo
-app.delete('/todos/:id', async (req, res) => {
-  try {
-  const {id} = req.params;
-  const deleteTodo = await pool.query('DELETE FROM todo WHERE todo_id = $1',
-  [id]);
-  console.log(`Todo id ${id} was removed.`)
-  } catch (err) {
-    console.error(err.message);
-  }
-
-})
+//TODO ROUTES
+app.use('/dashboard', require('./routes/dashboard'));
 
 //App listening to port
 app.listen(port, () => {

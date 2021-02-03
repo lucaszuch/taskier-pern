@@ -3,7 +3,7 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 
 
-function EditTodo({todo}) {
+function EditTodo({todo, setChangeTodos}) {
   //Set states
   const [description, setDescription] = useState(todo.description);
   const [show, setShow] = useState(false);
@@ -22,12 +22,17 @@ function EditTodo({todo}) {
     ev.preventDefault();
     try {
       const data = {description};
-      const response = await fetch(`http://localhost:5000/todos/${todo.todo_id}`,
+      const response = await fetch(`http://localhost:5000/dashboard/todos/${todo.todo_id}`,
       {
         method: "PUT",
-        headers: {"Content-Type":"application/json"},
+        headers: {
+          "Content-Type":"application/json",
+          jwt_token: localStorage.token
+        },
         body: JSON.stringify(data)
       });
+
+      setChangeTodos(true);
 
     } catch (err) {
       console.error(err.message);      
@@ -38,7 +43,7 @@ function EditTodo({todo}) {
     <Fragment>
       <Button variant="info"
               onClick={handleShow}
-              id={`#id${todo.todo_is}`}>
+              id={`#id${todo.todo_id}`}>
         <i class="fa fa-pencil"></i>
       </Button>
 
